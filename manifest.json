@@ -1,0 +1,47 @@
+{
+    "name": "Webogram",
+    "id": "webogram",
+    "packaging_format": 1,
+    "requirements": {
+        "yunohost": ">> 2.5.0"
+    },
+    "description": {
+        "en": "Webogram - a new era of messaging",
+        "fr": "Webogram - un nouvelle espace de messagerie"
+    },
+    "version": "0.5.3",
+    "license": "GNU v3.0",
+    "maintainer": {
+        "name": "cyp",
+        "email": "cyp@rouquin.me",
+        "url": "http://www.rouquin.me"
+    },
+    "multi_instance": false,
+    "url": "https://github.com/zhukov/webogram",
+    "services": [
+        "nginx"
+    ],
+    "arguments": {
+        "install" : [
+            {
+                "name": "domain",
+                "type": "domain",
+                "ask": {
+                    "en": "Choose a domain for Webogram",
+                    "fr": "Choisissez un domaine pour Webogram"
+                },
+                "example": "domain.org"
+            },
+            {
+                "name": "path",
+                "type": "path",
+                "ask": {
+                    "en": "Choose a path for Webogram",
+                    "fr": "Choisissez un chemin pour Webogram"
+                },
+                "example": "/webogram",
+                "default": "/webogram"
+            }
+        ]
+    }
+}

@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Exit on command errors and treat unset variables as an error
+set -u
+
+# Loads the generic functions usually used in the script
+source _common
+# Source app helpers
+source /usr/share/yunohost/helpers
+
+# Get multi-instances specific variables
+app=$YNH_APP_INSTANCE_NAME
+
+# Retrieve app settings
+domain=$(ynh_app_setting_get "$app" domain)
+
+ynh_secure_remove "/opt/${app}"
+
+# Delete nginx config
+ynh_remove_nginx_config
+
+# Remove user
+ynh_system_user_delete $app
+
+# Remove node
+nvm_install_dir="/opt/nvm"
+ynh_remove_nodejs
+
+# Reload SSOwat configuration
+sudo yunohost app ssowatconf
+
+echo -e "\e[0m"	# Restore normal color

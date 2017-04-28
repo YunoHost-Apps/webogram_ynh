@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# Exit on command errors and treat unset variables as an error
+set -eu
+
+# Loads the generic functions usually used in the script
+source _common
+# Source YunoHost helpers
+source /usr/share/yunohost/helpers
+
+# See comments in install script
+app=$YNH_APP_INSTANCE_NAME
+
+# Retrieve app settings
+domain=$(ynh_app_setting_get "$app" domain)
+path=$(ynh_app_setting_get "$app" path)
+
+ynh_backup_before_upgrade	# Backup the current version of the app
+ynh_clean_setup () {
+	ynh_backup_fail_upgrade	# restore it if the upgrade fails
+}
+ynh_abort_if_errors	# Active trap pour arrêter le script si une erreur est détectée.
+
+#=================================================
+# CHECK THE PATH
+#=================================================
+
+path=$(ynh_normalize_url_path $path)	# Vérifie et corrige la syntaxe du path.
+
+final_path="/opt/${app}"
+
+# Upgrade nodejs
+nvm_install_dir="/opt/nvm"
+cd $nvm_install_dir
+git fetch origin
+git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" origin`
+sudo bash $nvm_install_dir/nvm.sh
+
+# Update Webogram
+pushd $final_path
+git fetch
+git pull https://github.com/zhukov/webogram.git master
+git checkout $(git tag | tail -n 1)
+sudo npm install -g gulp
+npm install
+gulp clean
+gulp publish
+popd
+
+# Set permissions spip directory
+sudo chown -R $app: $final_path
+
+# Modify Nginx configuration file and copy it to Nginx conf directory
+ynh_nginx_config
+
+# Reload Nginx
+sudo systemctl reload nginx
+
+# Set app public
+ynh_app_setting_set "$app" unprotected_uris "/"
+
+# Reload SSOwat configuration
+sudo yunohost app ssowatconf

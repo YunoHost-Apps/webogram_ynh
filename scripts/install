@@ -1,0 +1,62 @@
+#!/bin/bash
+
+# Exit on command errors and treat unset variables as an error
+set -eu
+
+source _common	# Loads the generic functions usually used in the script
+source /usr/share/yunohost/helpers # Source app helpers
+
+ynh_clean_setup () {
+	# Clean installation residues that are not supported by the remove script.
+	# Clean hosts
+	echo ""
+}
+ynh_abort_if_errors	# Active trap to stop the script if an error is detected.
+
+domain=$YNH_APP_ARG_DOMAIN
+path=$YNH_APP_ARG_PATH
+
+app=$YNH_APP_INSTANCE_NAME
+
+CHECK_VAR "$app" "app name not set"
+
+# Check and fix path syntax.
+path=$(ynh_normalize_url_path $path)
+CHECK_DOMAINPATH
+CHECK_FINALPATH
+
+ynh_app_setting_set $app domain $domain
+ynh_app_setting_set $app path $path
+
+# Create system user dedicace for this app
+ynh_system_user_create $app
+
+# Creates the destination directory and stores its location.
+sudo mkdir "$final_path"
+ynh_app_setting_set $app final_path $final_path
+
+# Install de Node.js
+nvm_install_dir="/opt/nvm"
+ynh_install_nodejs 0.10
+
+# Get webogram
+sudo git clone https://github.com/zhukov/webogram.git $final_path
+
+# Install webogram
+pushd $final_path
+sudo $nodejs_path/npm install -g gulp
+$nodejs_path/npm install
+gulp clean
+gulp publish
+popd
+
+# Set permissions spip directory
+sudo chown -R $app: $final_path
+
+# Modify Nginx configuration file and copy it to Nginx conf directory
+ynh_nginx_config
+
+# Reload Nginx and regenerate SSOwat conf
+sudo service nginx reload
+sudo yunohost app setting webogram skipped_uris -v "/"
+sudo yunohost app ssowatconf
