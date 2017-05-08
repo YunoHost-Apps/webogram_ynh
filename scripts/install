@@ -46,7 +46,7 @@ sudo git clone https://github.com/zhukov/webogram.git $final_path
 
 # Install webogram
 pushd $final_path
-$nodejs_path/npm install -g gulp
+sudo $nodejs_path/npm install -g gulp
 $nodejs_path/npm install
 gulp clean
 gulp publish
