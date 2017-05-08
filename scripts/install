@@ -56,9 +56,5 @@ sudo chown -R $app: $final_path
 # Modify Nginx configuration file and copy it to Nginx conf directory
 ynh_nginx_config
 
-# Regenerate SSOwat conf
-sudo yunohost app setting webogram skipped_uris -v "/"
-sudo yunohost app ssowatconf
-
 # Reload Nginx
 sudo service nginx reload
