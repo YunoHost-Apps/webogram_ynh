@@ -33,6 +33,8 @@ ynh_system_user_create $app
 
 # Creates the destination directory and stores its location.
 sudo mkdir "$final_path"
+# Set permissions spip directory
+sudo chown -R $app: $final_path
 ynh_app_setting_set $app final_path $final_path
 
 # Install de Node.js
@@ -49,9 +51,6 @@ $nodejs_path/npm install
 gulp clean
 gulp publish
 popd
-
-# Set permissions spip directory
-sudo chown -R $app: $final_path
 
 # Modify Nginx configuration file and copy it to Nginx conf directory
 ynh_nginx_config
