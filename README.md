@@ -1,5 +1,7 @@
 # Webogram for YunoHost
 
+[![Integration level](https://dash.yunohost.org/integration/webogram.svg)](https://dash.yunohost.org/appci/app/webogram) ![](https://ci-apps.yunohost.org/ci/badges/webogram.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/webogram.maintain.svg)
+
 [![Latest Version](https://img.shields.io/badge/version-_--_-green.svg?style=flat)](https://github.com/YunoHost-Apps/webogram_ynh/releases)
 [![Status](https://img.shields.io/badge/status-testing-yellow.svg?style=flat)](https://github.com/YunoHost-Apps/webogram_ynh/milestones)
 [![Dependencies](https://img.shields.io/badge/dependencies-includes-lightgrey.svg?style=flat)](https://github.com/YunoHost-Apps/webogram_ynh#dependencies)
